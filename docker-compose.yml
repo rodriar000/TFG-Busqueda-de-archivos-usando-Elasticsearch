@@ -1,0 +1,57 @@
+version: "3.9"
+
+services:
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.13.4
+    environment:
+      - discovery.type=single-node
+      - ES_JAVA_OPTS=-Xms1g -Xmx1g
+      - ELASTIC_PASSWORD=changeme
+    ports:
+      - "9200:9200"
+    volumes:
+      - es-data:/usr/share/elasticsearch/data
+
+  cli:
+    build: .
+    depends_on:
+      - elasticsearch
+    environment:
+      ELASTIC_HOST: elasticsearch
+      ELASTIC_PORT: 9200
+      ELASTIC_SCHEME: http
+      ELASTIC_USERNAME: elastic
+      ELASTIC_PASSWORD: changeme
+    volumes:
+      - ./config:/app/config:ro
+      - ./samples:/app/samples:ro
+    command: ["sleep", "infinity"]
+    tty: true
+    stdin_open: true
+
+  web:
+    build: .
+    depends_on:
+      - elasticsearch
+    environment:
+      ELASTIC_HOST: elasticsearch
+      ELASTIC_PORT: 9200
+      ELASTIC_SCHEME: http
+      ELASTIC_USERNAME: elastic
+      ELASTIC_PASSWORD: changeme
+      LOG_LEVEL: INFO
+    command: [
+      "uvicorn",
+      "src.web.app:app",
+      "--host",
+      "0.0.0.0",
+      "--port",
+      "8000"
+    ]
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./config:/app/config:ro
+
+volumes:
+  es-data:

@@ -1,0 +1,1 @@
+Elasticsearch makes it easy to index and search your documents with powerful analyzers.

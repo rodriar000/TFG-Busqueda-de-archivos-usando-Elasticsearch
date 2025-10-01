@@ -1,0 +1,16 @@
+elasticsearch:
+  host: localhost
+  port: 9200
+  scheme: http
+  index: docs
+  username: null
+  password: null
+  api_key: null
+  bearer_token: null
+logging:
+  level: INFO
+  file: logs/file-search-cli.log
+  max_bytes: 1048576
+  backup_count: 5
+cli:
+  default_top: 10
